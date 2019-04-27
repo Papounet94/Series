@@ -21,6 +21,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         // Do any additional setup after loading the view.
         seriesTableView.delegate = self
         seriesTableView.dataSource = self
+        loadSeries()
     }
     
     //MARK: - Tableview Delegate methods
@@ -35,7 +36,30 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         return cell
     }
     
-
+    //MARK: - Handling creation of New series
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        let alert = UIAlertController(title: "Add New Series", message: "", preferredStyle: .alert)
+        var textField = UITextField()
+        let action = UIAlertAction(title: "Add", style: .default) { (action) in
+            let newSerie = Serie(context: self.context)
+            newSerie.name = textField.text!
+            newSerie.date = Date(timeIntervalSinceNow: 0)
+            newSerie.season = 1
+            newSerie.episode = 1
+            newSerie.running = true
+            newSerie.announced = false
+            newSerie.terminated = false
+            self.series.append(newSerie)
+            self.saveSeries()
+        }
+        alert.addTextField { (alertTextField) in
+            textField = alertTextField
+            textField.placeholder = "Add the ame of the Series"
+        }
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+    }
+    
     func loadSeries(with request : NSFetchRequest<Serie> = Serie.fetchRequest())  {
         do {
             series = try context.fetch(request)
@@ -43,14 +67,17 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         catch {
             print("Error fetching context \(error)")
         }
+        seriesTableView.reloadData()
     }
     
     func saveSeries() {
         do {
-            try context.save()        }
+            try context.save()
+        }
         catch {
             print("Error saving context \(error)")
         }
+        seriesTableView.reloadData()
     }
 }
 
