@@ -14,8 +14,11 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     //MARK: - UI outlets
     @IBOutlet weak var seriesTableView: UITableView!
     
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var titleBtn: UIButton!
+    @IBOutlet weak var dateBtn: UIButton!
+    @IBOutlet weak var seasonBtn: UIButton!
+    @IBOutlet weak var episodeBtn: UIButton!
+    
     
     var series = [Serie]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -42,8 +45,11 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedSeries = series[indexPath.row]
-        titleLabel.text = selectedSeries.name
-        dateLabel.text = showDate(date: selectedSeries.date!)
+        titleBtn.setTitle(selectedSeries.name, for: .normal)
+        dateBtn.setTitle(showDate(date: selectedSeries.date!), for: .normal)
+        seasonBtn.setTitle("\(selectedSeries.season)", for: .normal)
+        episodeBtn.setTitle("\(selectedSeries.episode)", for: .normal)
+
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -65,6 +71,10 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
+    
+    //MARK: - Methods for responding to UI actions
+    
+    
     
     //MARK: - Data Manipulation methods
     
