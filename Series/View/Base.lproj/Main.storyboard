@@ -68,6 +68,9 @@
                                                 <state key="normal" title="Title">
                                                     <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="titleBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="biN-xK-bV4"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1yP-n1-VMv">
                                                 <rect key="frame" x="223.5" y="8" width="103.5" height="30"/>
@@ -76,6 +79,9 @@
                                                 <state key="normal" title="Date">
                                                     <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="dateBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ZM1-B3-qXe"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bno-ps-6Xb" userLabel="Season Btn">
                                                 <rect key="frame" x="8" y="46" width="155.5" height="30"/>
@@ -84,6 +90,9 @@
                                                 <state key="normal" title="Season">
                                                     <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="seasonBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="iUW-b6-lnh"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Xm-yy-cjZ">
                                                 <rect key="frame" x="171.5" y="46" width="155.5" height="30"/>
@@ -92,6 +101,9 @@
                                                 <state key="normal" title="Episode">
                                                     <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="episodeBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="4To-gD-QiV"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <constraints>

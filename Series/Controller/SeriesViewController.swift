@@ -22,6 +22,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     
     var series = [Serie]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var selectedRow : Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +45,8 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedSeries = series[indexPath.row]
+        selectedRow = indexPath.row
+        let selectedSeries = series[selectedRow!]
         titleBtn.setTitle(selectedSeries.name, for: .normal)
         dateBtn.setTitle(showDate(date: selectedSeries.date!), for: .normal)
         seasonBtn.setTitle("\(selectedSeries.season)", for: .normal)
@@ -74,6 +76,88 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     
     //MARK: - Methods for responding to UI actions
     
+    // Modify series title
+    @IBAction func titleBtnPressed(_ sender: UIButton) {
+        // Prepare an Alert View with a TexField for input
+        let alert = UIAlertController(title: "Modify Title", message: "", preferredStyle: .alert)
+        var textField = UITextField()
+        // Set the action to perform when clicking Done button
+        let action = UIAlertAction(title: "Done", style: .default) { (action) in
+            self.series[self.selectedRow!].name = textField.text!
+            self.titleBtn.setTitle(textField.text!, for: .normal)
+            self.saveSeries()
+        }
+        alert.addTextField { (alertTextField) in
+            textField = alertTextField
+            textField.placeholder = self.titleBtn.title(for: .normal)
+        }
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    // Modify series Date
+    @IBAction func dateBtnPressed(_ sender: UIButton) {
+        // prepare an AlertView with enough space for the Date Picker
+        let alert = UIAlertController(title: "Modify Date\n\n\n\n\n\n\n\n", message: "", preferredStyle: .alert)
+        let datePicker = UIDatePicker()
+        datePicker.frame = CGRect(x: 0, y: 15, width: 270, height: 200)
+        datePicker.datePickerMode = .date
+        //Set the current date of the Date Picker to the date of the Date Button
+        datePicker.setDate(makeDate(dateString: dateBtn.title(for: .normal)!), animated: false)
+        alert.view.addSubview(datePicker)
+        // Manage the action of the Done Button af the Alert View
+        let action = UIAlertAction(title: "Done", style: .default) { (action) in
+            self.series[self.selectedRow!].date = datePicker.date
+            self.dateBtn.setTitle(self.showDate(date: datePicker.date), for: .normal)
+            self.saveSeries()
+        }
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    // Modify series season number
+    @IBAction func seasonBtnPressed(_ sender: UIButton) {
+        // Prepare an Alert View with a TexField for input
+        let alert = UIAlertController(title: "Modify Season Number", message: "", preferredStyle: .alert)
+        var textField = UITextField()
+        // Set the action to perform when clicking Done button
+        let action = UIAlertAction(title: "Done", style: .default) { (action) in
+            let tmp = textField.text!
+            self.series[self.selectedRow!].season = Int16(tmp)!
+            self.seasonBtn.setTitle(textField.text!, for: .normal)
+            self.saveSeries()
+        }
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = self.seasonBtn.title(for: .normal)
+            // Accept only numeric input
+            alertTextField.keyboardType = .numberPad
+            textField = alertTextField
+        }
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    //Modifi series episode number
+    @IBAction func episodeBtnPressed(_ sender: UIButton) {
+        // Prepare an Alert View with a TexField for input
+        let alert = UIAlertController(title: "Modify Episode Number", message: "", preferredStyle: .alert)
+        var textField = UITextField()
+        // Set the action to perform when clicking Done button
+        let action = UIAlertAction(title: "Done", style: .default) { (action) in
+            let tmp = textField.text!
+            self.series[self.selectedRow!].episode = Int16(tmp)!
+            self.episodeBtn.setTitle(textField.text!, for: .normal)
+            self.saveSeries()
+        }
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = self.episodeBtn.title(for: .normal)
+            // Accept only numeric input
+            alertTextField.keyboardType = .numberPad
+            textField = alertTextField
+        }
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+    }
     
     
     //MARK: - Data Manipulation methods
