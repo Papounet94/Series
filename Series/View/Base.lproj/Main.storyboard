@@ -203,6 +203,7 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="containerView" destination="3sF-mM-HB1" id="oxM-MX-3Ai"/>
                         <outlet property="dateBtn" destination="1yP-n1-VMv" id="nKG-p8-22j"/>
                         <outlet property="episodeBtn" destination="7Xm-yy-cjZ" id="fx6-O7-J2n"/>
                         <outlet property="seasonBtn" destination="Bno-ps-6Xb" id="kWw-eV-apo"/>

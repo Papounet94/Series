@@ -19,6 +19,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     @IBOutlet weak var seasonBtn: UIButton!
     @IBOutlet weak var episodeBtn: UIButton!
     
+    @IBOutlet weak var containerView: UIView!
     
     var series = [Serie]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -29,21 +30,30 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         // Do any additional setup after loading the view.
         seriesTableView.delegate = self
         seriesTableView.dataSource = self
+        
+        seriesTableView.register(UINib(nibName: "SerieCell", bundle: nil), forCellReuseIdentifier: "CustomSerieCell")
         loadSeries()
+        containerView.isHidden = true
     }
     
     //MARK: - Tableview Delegate methods
     
+    // Number of rows in Section
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return series.count
     }
     
+    // cellForRow
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "SerieCell", for: indexPath)
-        cell.textLabel!.text = series[indexPath.row].name
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CustomSerieCell", for: indexPath) as! CustomSerieCell
+        cell.titleLabel.text = series[indexPath.row].name!
+        cell.episodeLabel.text = String(format: "S%02ldE%02ld", Int(series[indexPath.row].season), Int(series[indexPath.row].episode))
+        cell.dateLabel.text = showDate(date: (series[indexPath.row].date!))
+
         return cell
     }
     
+    // didSelectRow
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedRow = indexPath.row
         let selectedSeries = series[selectedRow!]
@@ -51,8 +61,8 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         dateBtn.setTitle(showDate(date: selectedSeries.date!), for: .normal)
         seasonBtn.setTitle("\(selectedSeries.season)", for: .normal)
         episodeBtn.setTitle("\(selectedSeries.episode)", for: .normal)
-
-        tableView.deselectRow(at: indexPath, animated: true)
+        containerView.isHidden = false
+        //tableView.deselectRow(at: indexPath, animated: true)
     }
     
     //MARK: - Handling creation of New series
@@ -68,7 +78,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         }
         alert.addTextField { (alertTextField) in
             textField = alertTextField
-            textField.placeholder = "Add the ame of the Series"
+            textField.placeholder = "Add the name of the Series"
         }
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
@@ -123,7 +133,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         // Set the action to perform when clicking Done button
         let action = UIAlertAction(title: "Done", style: .default) { (action) in
             let tmp = textField.text!
-            self.series[self.selectedRow!].season = Int16(tmp)!
+            self.series[self.selectedRow!].season = Int64(tmp)!
             self.seasonBtn.setTitle(textField.text!, for: .normal)
             self.saveSeries()
         }
@@ -137,7 +147,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         present(alert, animated: true, completion: nil)
     }
     
-    //Modifi series episode number
+    //Modify series episode number
     @IBAction func episodeBtnPressed(_ sender: UIButton) {
         // Prepare an Alert View with a TexField for input
         let alert = UIAlertController(title: "Modify Episode Number", message: "", preferredStyle: .alert)
@@ -145,7 +155,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         // Set the action to perform when clicking Done button
         let action = UIAlertAction(title: "Done", style: .default) { (action) in
             let tmp = textField.text!
-            self.series[self.selectedRow!].episode = Int16(tmp)!
+            self.series[self.selectedRow!].episode = Int64(tmp)!
             self.episodeBtn.setTitle(textField.text!, for: .normal)
             self.saveSeries()
         }
@@ -180,6 +190,9 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
             print("Error saving context \(error)")
         }
         seriesTableView.reloadData()
+        if selectedRow != nil {
+            seriesTableView.selectRow(at: IndexPath(row: selectedRow!, section: 0), animated: true, scrollPosition: .middle)
+        }
     }
     
     //MARK: - Utility methods

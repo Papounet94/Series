@@ -3,10 +3,10 @@
     <entity name="Serie" representedClassName="Serie" syncable="YES" codeGenerationType="class">
         <attribute name="announced" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="date" attributeType="Date" minDateTimeInterval="567990000" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="episode" attributeType="Integer 16" minValueString="1" defaultValueString="1" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="episode" attributeType="Integer 64" minValueString="1" defaultValueString="1" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="running" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="season" attributeType="Integer 16" minValueString="1" defaultValueString="1" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="season" attributeType="Integer 64" minValueString="1" defaultValueString="1" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="terminated" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
     </entity>
     <elements>
