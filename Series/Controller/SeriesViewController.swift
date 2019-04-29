@@ -12,17 +12,24 @@ import CoreData
 class SeriesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     //MARK: - UI outlets
+    // The TableView that displays the Series list
     @IBOutlet weak var seriesTableView: UITableView!
-    
+    // The outles of the Editing zone Fields
     @IBOutlet weak var titleBtn: UIButton!
     @IBOutlet weak var dateBtn: UIButton!
     @IBOutlet weak var seasonBtn: UIButton!
     @IBOutlet weak var episodeBtn: UIButton!
-    
+    // The outlet of the Editing Zone
     @IBOutlet weak var containerView: UIView!
     
+    //MARK: - Class variables
+    // The Series list
     var series = [Serie]()
+    // the context for the Coredata Database
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    // The current selected Row in the table view (nil if none selected)
+    // for enabling sorting of the series list, the selected serie has to saved, not only the row number
+    var selectedSerie : Serie?
     var selectedRow : Int?
     
     override func viewDidLoad() {
@@ -54,23 +61,21 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     
     // didSelectRow
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // whe the user clicks on a selected row he deselects it
+        // when the user clicks on a selected row, he deselects it
         if selectedRow == indexPath.row {
             tableView.deselectRow(at: indexPath, animated: true)
             containerView.isHidden = true
             selectedRow = nil
+            selectedSerie = nil
         }
         // otherwise he selects it and the editing view is set with the parameters of the selected row
         // and is shown at the bottom
         else
         {
             selectedRow = indexPath.row
+            selectedSerie = series[selectedRow!]
             let selectedSeries = series[selectedRow!]
             updateFields(title: selectedSeries.name!, date: showDate(date: selectedSeries.date!), season: selectedSeries.season, episode: selectedSeries.episode)
-//            titleBtn.setTitle(selectedSeries.name, for: .normal)
-//            dateBtn.setTitle(showDate(date: selectedSeries.date!), for: .normal)
-//            seasonBtn.setTitle("\(selectedSeries.season)", for: .normal)
-//            episodeBtn.setTitle("\(selectedSeries.episode)", for: .normal)
             containerView.isHidden = false
         }
     }
@@ -109,7 +114,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         }
         alert.addTextField { (alertTextField) in
             textField = alertTextField
-            textField.placeholder = self.titleBtn.title(for: .normal)
+            textField.text = self.titleBtn.title(for: .normal)
         }
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
@@ -148,7 +153,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
             self.saveSeries()
         }
         alert.addTextField { (alertTextField) in
-            alertTextField.placeholder = self.seasonBtn.title(for: .normal)
+            alertTextField.text = self.seasonBtn.title(for: .normal)
             // Accept only numeric input
             alertTextField.keyboardType = .numberPad
             textField = alertTextField
@@ -170,7 +175,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
             self.saveSeries()
         }
         alert.addTextField { (alertTextField) in
-            alertTextField.placeholder = self.episodeBtn.title(for: .normal)
+            alertTextField.text = self.episodeBtn.title(for: .normal)
             // Accept only numeric input
             alertTextField.keyboardType = .numberPad
             textField = alertTextField
@@ -185,6 +190,8 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     func loadSeries(with request : NSFetchRequest<Serie> = Serie.fetchRequest())  {
         do {
             series = try context.fetch(request)
+            // List is sorted by ascending dates
+            series.sort { $0.date! < $1.date! }
         }
         catch {
             print("Error fetching context \(error)")
@@ -193,6 +200,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func saveSeries() {
+        series.sort { $0.date! < $1.date! }
         do {
             try context.save()
         }
@@ -201,6 +209,8 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         }
         seriesTableView.reloadData()
         if selectedRow != nil {
+            // find the row for the selectedSerie as it may have changed after sorting
+            selectedRow = series.firstIndex(of: selectedSerie!)
             seriesTableView.selectRow(at: IndexPath(row: selectedRow!, section: 0), animated: true, scrollPosition: .middle)
         }
     }
