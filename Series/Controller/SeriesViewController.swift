@@ -45,24 +45,34 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     
     // cellForRow
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CustomSerieCell", for: indexPath) as! CustomSerieCell
-        cell.titleLabel.text = series[indexPath.row].name!
-        cell.episodeLabel.text = String(format: "S%02ldE%02ld", Int(series[indexPath.row].season), Int(series[indexPath.row].episode))
-        cell.dateLabel.text = showDate(date: (series[indexPath.row].date!))
+        var cell = tableView.dequeueReusableCell(withIdentifier: "CustomSerieCell", for: indexPath) as! CustomSerieCell
+        
+        updateCellUI(cell: &cell, row: indexPath.row)
 
         return cell
     }
     
     // didSelectRow
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedRow = indexPath.row
-        let selectedSeries = series[selectedRow!]
-        titleBtn.setTitle(selectedSeries.name, for: .normal)
-        dateBtn.setTitle(showDate(date: selectedSeries.date!), for: .normal)
-        seasonBtn.setTitle("\(selectedSeries.season)", for: .normal)
-        episodeBtn.setTitle("\(selectedSeries.episode)", for: .normal)
-        containerView.isHidden = false
-        //tableView.deselectRow(at: indexPath, animated: true)
+        // whe the user clicks on a selected row he deselects it
+        if selectedRow == indexPath.row {
+            tableView.deselectRow(at: indexPath, animated: true)
+            containerView.isHidden = true
+            selectedRow = nil
+        }
+        // otherwise he selects it and the editing view is set with the parameters of the selected row
+        // and is shown at the bottom
+        else
+        {
+            selectedRow = indexPath.row
+            let selectedSeries = series[selectedRow!]
+            updateFields(title: selectedSeries.name!, date: showDate(date: selectedSeries.date!), season: selectedSeries.season, episode: selectedSeries.episode)
+//            titleBtn.setTitle(selectedSeries.name, for: .normal)
+//            dateBtn.setTitle(showDate(date: selectedSeries.date!), for: .normal)
+//            seasonBtn.setTitle("\(selectedSeries.season)", for: .normal)
+//            episodeBtn.setTitle("\(selectedSeries.episode)", for: .normal)
+            containerView.isHidden = false
+        }
     }
     
     //MARK: - Handling creation of New series
@@ -195,6 +205,52 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
+    //MARK: - Button Handlers
+    
+    // End Series Button
+    @IBAction func endSeriesButtonPressed(_ sender: UIButton) {
+        // set the date to 01/01/4000
+        series[selectedRow!].date = makeDate(dateString: "01/01", desiredYear: 4000)
+        // set the Terminated property to true
+        // set the Announced and Running properties to false
+        series[selectedRow!].running = false
+        series[selectedRow!].announced = false
+        series[selectedRow!].terminated = true
+        saveSeries()
+    }
+    
+    //New Season Button
+    @IBAction func newSeasonButtonPressed(_ sender: UIButton) {
+        // set the Announced property to true
+        // set the Running and Terminated property to false
+        series[selectedRow!].running = false
+        series[selectedRow!].announced = true
+        series[selectedRow!].terminated = false
+        saveSeries()
+    }
+    
+    //End Season Button
+    @IBAction func endSeasonButtonPressed(_ sender: UIButton) {
+        // set the date to 01/01/3000
+        series[selectedRow!].date = makeDate(dateString: "01/01", desiredYear: 3000)
+        // set all properties to false
+        series[selectedRow!].running = false
+        series[selectedRow!].announced = false
+        series[selectedRow!].terminated = false
+        saveSeries()
+    }
+    
+    //Next Week Button
+    @IBAction func nextWeekButtonPressed(_ sender: UIButton) {
+        // advance the date by 7 days
+        series[selectedRow!].date! += 7*24*60*60 // 7 days in seconds
+        // set running property to true and all other to false
+        series[selectedRow!].running = true
+        series[selectedRow!].announced = false
+        series[selectedRow!].terminated = false
+        saveSeries()
+    }
+    
     //MARK: - Utility methods
     
     // Extract the reduced date from a Date value
@@ -205,11 +261,12 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     // Create a Date value from a reduced date
-    func makeDate(dateString : String) -> Date {
+    func makeDate(dateString : String, desiredYear: Int = 0) -> Date {
         
-        // Get the current year
         let cal = Calendar.current
-        let year = cal.component(.year, from: Date())
+        // set year to the current year if no value is passed in desiredYear
+        var year : Int
+        year = desiredYear == 0 ? cal.component(.year, from: Date()) : desiredYear
         //Gets [day, month] from reduced date
         let components = dateString.split(separator: "/")
         // Format a new date with these components
@@ -222,6 +279,62 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         comp.hour = 12
         
         return cal.date(from: comp)!
+    }
+    
+    func updateCellUI( cell: inout CustomSerieCell, row: Int) {
+        // fill in the cell fields
+        cell.titleLabel.text = series[row].name!
+        cell.episodeLabel.text = String(format: "S%02ldE%02ld", Int(series[row].season), Int(series[row].episode))
+        cell.dateLabel.text = showDate(date: (series[row].date!))
+        // if 'running' is true then display date in green
+        if series[row].running {
+            cell.dateLabel.textColor = UIColor(red: 0.0, green: 0.5, blue: 0, alpha: 1.0)
+            cell.titleLabel.textColor = UIColor.darkGray
+            cell.titleLabel.font = UIFont.systemFont(ofSize: cell.titleLabel.font.pointSize)
+            cell.dateLabel.font = UIFont.systemFont(ofSize: cell.dateLabel.font.pointSize)
+        }
+            // if 'announced' is true then display date in blue
+        else if series[row].announced {
+            cell.dateLabel.textColor = UIColor.blue
+            cell.titleLabel.textColor = UIColor.darkGray
+            cell.titleLabel.font = UIFont.systemFont(ofSize: cell.titleLabel.font.pointSize)
+            cell.dateLabel.font = UIFont.systemFont(ofSize: cell.dateLabel.font.pointSize)
+        }
+            // if 'terminated is true then display '----' as date, display title in italics gray
+            // and do not display season and episode
+        else if series[row].terminated {
+            cell.titleLabel.textColor = UIColor.gray
+            cell.dateLabel.textColor = UIColor.gray
+            cell.episodeLabel.text = ""
+            cell.dateLabel.text = "----"
+            cell.titleLabel.font = UIFont.italicSystemFont(ofSize: cell.titleLabel.font.pointSize)
+            cell.dateLabel.font = UIFont.italicSystemFont(ofSize: cell.dateLabel.font.pointSize)
+        }
+            // if 'running', 'announced' and 'terminated' are false then display '????' as date
+            // and do not display season and episode
+        else {
+            cell.titleLabel.textColor = UIColor.darkGray
+            cell.dateLabel.textColor = UIColor.darkGray
+            cell.episodeLabel.text = ""
+            cell.dateLabel.text = "????"
+            cell.titleLabel.font = UIFont.systemFont(ofSize: cell.titleLabel.font.pointSize)
+            cell.dateLabel.font = UIFont.systemFont(ofSize: cell.dateLabel.font.pointSize)
+        }
+        // do not update fields when no row is selected
+        // update only the fields for the selected row
+        if selectedRow != nil && selectedRow == row {
+        updateFields(title: series[row].name!, date: showDate(date: (series[row].date!)), season: series[row].season, episode: series[row].episode)
+        }
+    }
+    
+    // Udate of the fields of the selected series
+    
+    func updateFields(title: String, date: String, season: Int64, episode: Int64) {
+        
+        titleBtn.setTitle(title, for: .normal)
+        dateBtn.setTitle(date, for: .normal)
+        seasonBtn.setTitle("\(season)", for: .normal)
+        episodeBtn.setTitle("\(episode)", for: .normal)
     }
 }
 

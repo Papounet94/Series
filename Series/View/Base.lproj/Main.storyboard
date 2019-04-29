@@ -135,6 +135,9 @@
                                         <state key="normal" title="End Series">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
+                                        <connections>
+                                            <action selector="endSeriesButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8tq-Hg-Udc"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rgy-mx-uGh">
                                         <rect key="frame" x="122.5" y="84" width="90" height="30"/>
@@ -145,6 +148,9 @@
                                         <state key="normal" title="New Season">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
+                                        <connections>
+                                            <action selector="newSeasonButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Z4l-cF-1Fx"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TCo-5L-9We">
                                         <rect key="frame" x="124.5" y="111" width="86" height="30"/>
@@ -155,6 +161,9 @@
                                         <state key="normal" title="End Season">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
+                                        <connections>
+                                            <action selector="endSeasonButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8jj-PU-bCK"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="epO-p8-tt5">
                                         <rect key="frame" x="248" y="84" width="79" height="30"/>
@@ -166,6 +175,9 @@
                                         <state key="normal" title="Next Week">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
+                                        <connections>
+                                            <action selector="nextWeekButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xdF-ZD-gHz"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.67455112934112549" green="0.15692374110221863" blue="0.10914970934391022" alpha="1" colorSpace="calibratedRGB"/>
