@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class SeriesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class SeriesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate {
 
     //MARK: - UI outlets
     // The TableView that displays the Series list
@@ -41,6 +41,11 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         seriesTableView.register(UINib(nibName: "SerieCell", bundle: nil), forCellReuseIdentifier: "CustomSerieCell")
         loadSeries()
         containerView.isHidden = true
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.selectedTextRange = textField.textRange(from: textField.beginningOfDocument, to: textField.endOfDocument)
+
     }
     
     //MARK: - Tableview Delegate methods
@@ -157,6 +162,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
             // Accept only numeric input
             alertTextField.keyboardType = .numberPad
             textField = alertTextField
+            textField.delegate = self
         }
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
@@ -179,6 +185,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
             // Accept only numeric input
             alertTextField.keyboardType = .numberPad
             textField = alertTextField
+            textField.delegate = self
         }
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
@@ -231,6 +238,8 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     
     //New Season Button
     @IBAction func newSeasonButtonPressed(_ sender: UIButton) {
+        // set the year to current year
+        series[selectedRow!].date = makeDate(dateString: "01/01")
         // set the Announced property to true
         // set the Running and Terminated property to false
         series[selectedRow!].running = false
@@ -243,6 +252,10 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     @IBAction func endSeasonButtonPressed(_ sender: UIButton) {
         // set the date to 01/01/3000
         series[selectedRow!].date = makeDate(dateString: "01/01", desiredYear: 3000)
+        // advance season number by +1
+        series[selectedRow!].season += 1
+        // set episode number to 1
+        series[selectedRow!].episode = 1
         // set all properties to false
         series[selectedRow!].running = false
         series[selectedRow!].announced = false
@@ -254,6 +267,8 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     @IBAction func nextWeekButtonPressed(_ sender: UIButton) {
         // advance the date by 7 days
         series[selectedRow!].date! += 7*24*60*60 // 7 days in seconds
+        // advance episode number by +1
+        series[selectedRow!].episode += 1
         // set running property to true and all other to false
         series[selectedRow!].running = true
         series[selectedRow!].announced = false
