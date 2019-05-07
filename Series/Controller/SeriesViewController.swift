@@ -198,7 +198,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
         do {
             series = try context.fetch(request)
             // List is sorted by ascending dates
-            series.sort { $0.date! < $1.date! }
+            series.sort { ($0.date!, $0.name!) < ($1.date!, $1.name!) }
         }
         catch {
             print("Error fetching context \(error)")
@@ -207,7 +207,7 @@ class SeriesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func saveSeries() {
-        series.sort { $0.date! < $1.date! }
+        series.sort { ($0.date!, $0.name!) < ($1.date!, $1.name!) }
         do {
             try context.save()
         }
